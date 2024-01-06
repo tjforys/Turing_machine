@@ -36,12 +36,13 @@ def turing_instant(stdscr, color):
     stdscr.clear()
     stdscr.addstr("Start values: ")
     write_tape_content(stdscr, header.position(), color)
+    last_pos = None
     while True:
         try:
             instr_input = (tape.input(header.position()), header.state())
         except IndexError:
             stdscr.addstr(1, 0, "End values:   ")
-            write_tape_content(stdscr, header.position(), color)
+            write_tape_content(stdscr, color, last_pos)
             stdscr.addstr(2, 0, f"Header: {(header.position(), header.state())}")
             stdscr.addstr(3, 0, "Program reached the end")
             stdscr.getch()
@@ -54,28 +55,30 @@ def turing_instant(stdscr, color):
         except KeyError:
             print(f'Command not found for {instr_input} input')
             break
+        last_pos = header.position()
         tape.change_value(header.position(), new_value)
         header.change_state(new_state)
         header.move(direction)
 
 
-def write_tape_content(stdscr, position, color):
+def write_tape_content(stdscr, color, last_pos):
     stdscr.addstr('[')
-    for item_id, item in enumerate(tape.content(), start=1):
-        if item_id == position:
+    for item_id, item in enumerate(tape.content()):
+        if item_id == last_pos:
             stdscr.addstr(item, color)
         else:
             stdscr.addstr(item)
-        if item_id != len(tape.content()):
+        if item_id != len(tape.content())-1:
             stdscr.addstr(", ")
     stdscr.addstr("]")
 
 
 def turing_steps(stdscr, color):
+    last_pos = None
     while True:
         stdscr.clear()
         stdscr.addstr(0, 0, "Values: ")
-        write_tape_content(stdscr, header.position(), color)
+        write_tape_content(stdscr, color, last_pos)
         stdscr.addstr(1, 0, f"Header: {(header.position(), header.state())}")
         stdscr.addstr(2, 0, "Continue to next line? [Y/n]")
         # print(f'{tape.content()} {(header.position(), header.state())}')
@@ -96,6 +99,7 @@ def turing_steps(stdscr, color):
             break
 
         tape.change_value(header.position(), new_value)
+        last_pos = header.position()
         header.change_state(new_state)
         header.move(direction)
         if check_if_continue(stdscr):
