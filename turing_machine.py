@@ -3,24 +3,117 @@ from classes.input import Input
 from classes.tape import Tape
 from classes.instructions import Instructions
 from configparser import ConfigParser
+import curses
+from curses import wrapper
 import argparse
 
 
-def check_if_continue():
+def check_if_continue(stdscr):
     while True:
-        if_continue = input("Continue to next line? [Y/n]: ")
+        if_continue = stdscr.getstr(3, 0).decode()
+        stdscr.refresh()
         if if_continue == "n":
-            print("The program has been stopped")
+            stdscr.move(4, 0)
+            stdscr.clrtoeol()
+            stdscr.addstr(3, 0, "The program has been stopped")
+            stdscr.getch()
             return True
         elif if_continue == "Y" or if_continue == "y" or if_continue == "":
             return False
         else:
-            print("Wrong input detected, try again.")
+            stdscr.move(3, 0)
+            stdscr.clrtoeol()
+            stdscr.addstr(4, 0, "Wrong input detected, try again.")
 
 
 def write_output(content):
     with open(machine_output, "w", encoding="utf8") as f:
         f.write(str(content))
+
+
+def turing_instant(stdscr, color):
+    # tape_start = tape.content()
+    stdscr.clear()
+    stdscr.addstr("Start values: ")
+    write_tape_content(stdscr, header.position(), color)
+    while True:
+        try:
+            instr_input = (tape.input(header.position()), header.state())
+        except IndexError:
+            stdscr.addstr(1, 0, "End values:   ")
+            write_tape_content(stdscr, header.position(), color)
+            stdscr.addstr(2, 0, f"Header: {(header.position(), header.state())}")
+            stdscr.addstr(3, 0, "Program reached the end")
+            stdscr.getch()
+            if not args.no_write:
+                write_output(
+                    f'{tape.content()} {(header.position(), header.state())}')
+            break
+        try:
+            new_value, new_state, direction = instructions.command(instr_input)
+        except KeyError:
+            print(f'Command not found for {instr_input} input')
+            break
+        tape.change_value(header.position(), new_value)
+        header.change_state(new_state)
+        header.move(direction)
+
+
+def write_tape_content(stdscr, position, color):
+    stdscr.addstr('[')
+    for item_id, item in enumerate(tape.content(), start=1):
+        if item_id == position:
+            stdscr.addstr(item, color)
+        else:
+            stdscr.addstr(item)
+        if item_id != len(tape.content()):
+            stdscr.addstr(", ")
+    stdscr.addstr("]")
+
+
+def turing_steps(stdscr, color):
+    while True:
+        stdscr.clear()
+        stdscr.addstr(0, 0, "Values: ")
+        write_tape_content(stdscr, header.position(), color)
+        stdscr.addstr(1, 0, f"Header: {(header.position(), header.state())}")
+        stdscr.addstr(2, 0, "Continue to next line? [Y/n]")
+        # print(f'{tape.content()} {(header.position(), header.state())}')
+        try:
+            instr_input = (tape.input(header.position()), header.state())
+        except IndexError:
+            stdscr.addstr(3, 0, "Program reached the end")
+            stdscr.refresh()
+            stdscr.getch()
+            if not args.no_write:
+                write_output(
+                    f'{tape.content()} {(header.position(), header.state())}')
+            break
+        try:
+            new_value, new_state, direction = instructions.command(instr_input)
+        except KeyError:
+            stdscr.addstr(3, 0, f'Command not found for {instr_input} input')
+            break
+
+        tape.change_value(header.position(), new_value)
+        header.change_state(new_state)
+        header.move(direction)
+        if check_if_continue(stdscr):
+            if not args.no_write:
+                write_output(tape.content())
+            break
+
+
+def terminal_writing(stdscr):
+    stdscr.clear()
+    stdscr.refresh()
+    curses.echo()
+    curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLACK)
+    RED_BLACK = curses.color_pair(1)
+    if args.instant:
+        turing_instant(stdscr, RED_BLACK)
+    else:
+        turing_steps(stdscr, RED_BLACK)
 
 
 if __name__ == "__main__":
@@ -41,48 +134,4 @@ if __name__ == "__main__":
                         help="disables writing result to output file",
                         action="store_true")
     args = parser.parse_args()
-    if args.instant:
-        while True:
-            try:
-                instr_input = (tape.input(header.position()), header.state())
-            except IndexError:
-                print(
-                    f'{tape.content()} {(header.position(),header.state())}')
-                if not args.no_write:
-                    write_output(
-                        f'{tape.content()} {(header.position(), header.state())}')
-                break
-            try:
-                new_value, new_state, direction = instructions.command(instr_input)
-            except KeyError:
-                print(f'Command not found for {instr_input} input')
-                break
-
-            tape.change_value(header.position(), new_value)
-            header.change_state(new_state)
-            header.move(direction)
-
-    else:
-        while True:
-            print(f'{tape.content()} {(header.position(), header.state())}')
-            try:
-                instr_input = (tape.input(header.position()), header.state())
-            except IndexError:
-                print("Program reached the end")
-                if not args.no_write:
-                    write_output(
-                        f'{tape.content()} {(header.position(), header.state())}')
-                break
-            try:
-                new_value, new_state, direction = instructions.command(instr_input)
-            except KeyError:
-                print(f'Command not found for {instr_input} input')
-                break
-
-            tape.change_value(header.position(), new_value)
-            header.change_state(new_state)
-            header.move(direction)
-            if check_if_continue():
-                if not args.no_write:
-                    write_output(tape.content())
-                break
+    wrapper(terminal_writing)
