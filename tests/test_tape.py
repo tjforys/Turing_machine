@@ -1,4 +1,4 @@
-from classes.class_Tape import Tape
+from classes.tape import Tape
 import pytest
 
 

@@ -1,4 +1,4 @@
-from classes.class_Head import Head
+from classes.head import Head
 
 
 def test_create_object_success():

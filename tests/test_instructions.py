@@ -1,4 +1,4 @@
-from classes.class_Instructions import Instructions
+from classes.instructions import Instructions
 from io import StringIO
 
 

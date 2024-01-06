@@ -1,4 +1,4 @@
-from classes.class_Input import Input
+from classes.input import Input
 from io import StringIO
 
 

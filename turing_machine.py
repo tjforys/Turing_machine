@@ -1,7 +1,7 @@
-from classes.class_Head import Head
-from classes.class_Input import Input
-from classes.class_Tape import Tape
-from classes.class_Instructions import Instructions
+from classes.head import Head
+from classes.input import Input
+from classes.tape import Tape
+from classes.instructions import Instructions
 from configparser import ConfigParser
 import argparse
 
