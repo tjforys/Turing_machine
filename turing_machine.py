@@ -2,7 +2,7 @@ from classes.class_Head import Head
 from classes.class_Input import Input
 from classes.class_Tape import Tape
 from classes.class_Instructions import Instructions
-from classes.class_FilePaths import FilePaths
+from configparser import ConfigParser
 import argparse
 
 
@@ -19,13 +19,18 @@ def check_if_continue():
 
 
 def write_output(content):
-    with open(FilePaths.machine_output, "w", encoding="utf8") as f:
+    with open(machine_output, "w", encoding="utf8") as f:
         f.write(str(content))
 
 
 if __name__ == "__main__":
-    instructions = Instructions(open(FilePaths.machine_instructions, "r"))
-    file_input = Input(open(FilePaths.machine_input, "r"))
+    config = ConfigParser()
+    config.read("config.ini")
+    machine_input = config["filepaths"]["machine_input"]
+    machine_instructions = config["filepaths"]["machine_instructions"]
+    machine_output = config["filepaths"]["machine_output"]
+    instructions = Instructions(open(machine_instructions, "r"))
+    file_input = Input(open(machine_input, "r"))
     tape = Tape(file_input.tape_content())
     header = Head(file_input.header_position(), file_input.header_state())
     parser = argparse.ArgumentParser()
