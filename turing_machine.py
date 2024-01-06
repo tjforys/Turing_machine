@@ -37,6 +37,9 @@ if __name__ == "__main__":
     parser.add_argument("-i", "--instant",
                         help="instantly gives end result and writes to a file",
                         action="store_true")
+    parser.add_argument("-nw", "--no_write",
+                        help="disables writing result to output file",
+                        action="store_true")
     args = parser.parse_args()
     if args.instant:
         while True:
@@ -45,8 +48,9 @@ if __name__ == "__main__":
             except IndexError:
                 print(
                     f'{tape.content()} {(header.position(),header.state())}')
-                write_output(
-                    f'{tape.content()} {(header.position(), header.state())}')
+                if not args.no_write:
+                    write_output(
+                        f'{tape.content()} {(header.position(), header.state())}')
                 break
             try:
                 new_value, new_state, direction = instructions.command(instr_input)
@@ -65,8 +69,9 @@ if __name__ == "__main__":
                 instr_input = (tape.input(header.position()), header.state())
             except IndexError:
                 print("Program reached the end")
-                write_output(
-                    f'{tape.content()} {(header.position(), header.state())}')
+                if not args.no_write:
+                    write_output(
+                        f'{tape.content()} {(header.position(), header.state())}')
                 break
             try:
                 new_value, new_state, direction = instructions.command(instr_input)
@@ -78,5 +83,6 @@ if __name__ == "__main__":
             header.change_state(new_state)
             header.move(direction)
             if check_if_continue():
-                write_output(tape.content())
+                if not args.no_write:
+                    write_output(tape.content())
                 break
