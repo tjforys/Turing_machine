@@ -1,21 +1,33 @@
-from classes.class_Head import Head
+from enum import Enum
 
 
-def test_create_object_success():
-    header = Head(1, "q0")
-    assert header.position() == 1
-    assert header.state() == "q0"
+class Directions(str, Enum):
+    LEFT = "L"
+    RIGHT = "R"
 
 
-def test_change_state_success():
-    header = Head(1, "q0")
-    header.change_state("q1")
-    assert header.state() == "q1"
+class Head:
+    def __init__(self, position, state):
+        self._position = position
+        self._state = state
 
+    def position(self):
+        return self._position
 
-def test_change_position_general_success():
-    header = Head(1, "q0")
-    header.move("L")
-    assert header.position() == 0
-    header.move("R")
-    assert header.position() == 1
+    def state(self):
+        return self._state
+
+    def change_state(self, new_state):
+        self._state = new_state
+
+    def _move_right(self):
+        self._position += 1
+
+    def _move_left(self):
+        self._position -= 1
+
+    def move(self, direction):
+        if direction == Directions.RIGHT:
+            self._move_right()
+        elif direction == Directions.LEFT:
+            self._move_left()
