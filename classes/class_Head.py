@@ -1,3 +1,11 @@
+from enum import Enum
+
+
+class Directions(str, Enum):
+    LEFT = "L"
+    RIGHT = "R"
+
+
 class Head:
     def __init__(self, position, state):
         self._position = position
@@ -19,7 +27,7 @@ class Head:
         self._position -= 1
 
     def move(self, direction):
-        if direction == "R":
+        if direction == Directions.RIGHT:
             self._move_right()
-        elif direction == "L":
+        elif direction == Directions.LEFT:
             self._move_left()
