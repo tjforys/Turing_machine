@@ -33,6 +33,8 @@ def write_output(content):
 
 def turing_instant(stdscr, color):
     # tape_start = tape.content()
+    move_cap = int(config["move_cap"]["instant_cap"])
+    move_count = 0
     stdscr.clear()
     stdscr.addstr("Start values: ")
     write_tape_content(stdscr, header.position(), color)
@@ -53,12 +55,18 @@ def turing_instant(stdscr, color):
         try:
             new_value, new_state, direction = instructions.command(instr_input)
         except KeyError:
-            print(f'Command not found for {instr_input} input')
+            stdscr.addstr(3, 0, f'Command not found for {instr_input} input')
+            stdscr.getch()
+            break
+        if move_count > move_cap:
+            stdscr.addstr(1, 0, f"Move count exceeded {move_cap}, program closed")
+            stdscr.getch()
             break
         last_pos = header.position()
         tape.change_value(header.position(), new_value)
         header.change_state(new_state)
         header.move(direction)
+        move_count += 1
 
 
 def write_tape_content(stdscr, color, last_pos):
@@ -96,6 +104,7 @@ def turing_steps(stdscr, color):
             new_value, new_state, direction = instructions.command(instr_input)
         except KeyError:
             stdscr.addstr(3, 0, f'Command not found for {instr_input} input')
+            stdscr.getch()
             break
 
         tape.change_value(header.position(), new_value)
