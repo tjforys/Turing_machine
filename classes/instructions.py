@@ -1,3 +1,13 @@
+class InstructionsFileEmptyError(Exception):
+    """Custom error for when the instructions file is empty."""
+    pass
+
+
+class InvalidInstructionFileError(Exception):
+    """Custom error for when the instructions file contains invalid data."""
+    pass
+
+
 class Instructions:
     """Instructions class is responsible for reading the instructions file and managing commands according to the input.
     """
@@ -8,6 +18,10 @@ class Instructions:
             file (txt file): File containing instructions for the turing machine.
         """
         file_lines = file.read().split("\n")
+        if all(line == "" for line in file_lines):
+            raise InstructionsFileEmptyError("Instructions file is empty")
+        if any(len(line.split(", ")) != 5 for line in file_lines):
+            raise InvalidInstructionFileError("Invalid data in instructions file.")
         self._content = {}
         for instruction in file_lines:
             instructions = instruction.split(", ")

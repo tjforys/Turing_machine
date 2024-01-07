@@ -1,3 +1,13 @@
+class InputFileEmptyError(Exception):
+    """Custom error to be displayed when the input file is empty."""
+    pass
+
+
+class InvalidInputFileError(Exception):
+    """Custom error to be displayed when the input file data is invalid."""
+    pass
+
+
 class Input:
     """Input class is responsible for reading the input file and setting the initial values of the tape and header.
     """
@@ -8,8 +18,15 @@ class Input:
             file (txt file): Input file containing the inital contents of the turing machine.
         """
         machine_input = file.read().split('\n')
-        self._tape_content = machine_input[0].split(', ')
-        self._header_content = machine_input[1].split(', ')
+        if all(line == "" for line in machine_input):
+            raise InputFileEmptyError("Input file is empty")
+        try:
+            self._tape_content = machine_input[0].split(', ')
+            self._header_content = machine_input[1].split(', ')
+        except Exception:
+            raise InvalidInputFileError("Data inside input file is invalid.")
+        if len(self.header_content()) != 2:
+            raise InvalidInputFileError("Header data inside input file is invalid.")
 
     def tape_content(self):
         """Gets the initial tape content from the input file.
