@@ -46,13 +46,11 @@ class Head:
         self._state = new_state
 
     def _move_right(self):
-        """Moves the header to the right on the tape.
-        """
+        """Moves the header to the right on the tape."""
         self._position += 1
 
     def _move_left(self):
-        """Moves the header to the left on the tape.
-        """
+        """Moves the header to the left on the tape."""
         self._position -= 1
 
     def move(self, direction):

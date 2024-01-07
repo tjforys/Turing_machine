@@ -14,6 +14,10 @@ class Instructions:
     def __init__(self, file):
         """Creates an instance of an Instructions class. Creates a input: command dictionary from a read file.
 
+        Raises:
+        InstructionsFileEmptyError: Exception if Instruction file is empty.
+        InvalidInstructionFileError: Exception if Instruction file has invalid data.
+
         Args:
             file (txt file): File containing instructions for the turing machine.
         """
