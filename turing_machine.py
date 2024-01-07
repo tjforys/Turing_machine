@@ -9,6 +9,11 @@ import argparse
 
 
 def check_if_continue(stdscr):
+    """Function collects user input whether to stop the program.
+
+    Returns:
+        Bool: Information whether the user decided to stop the program.
+    """
     while True:
         if_continue = stdscr.getstr(3, 0).decode()
         stdscr.refresh()
@@ -27,12 +32,21 @@ def check_if_continue(stdscr):
 
 
 def write_output(content):
+    """Function outputs machine content to an output file.
+
+    Args:
+        content (any): Content to be written to the output file.
+    """
     with open(machine_output, "w", encoding="utf8") as f:
         f.write(str(content))
 
 
 def turing_instant(stdscr, color):
-    # tape_start = tape.content()
+    """Instantly goes through all the steps of the machine. Writes the output in the curses terminal. Writes to the output file.
+
+    Args:
+        color (curses.color_pair): Colors to distinguish the latest changed value in the tape.
+    """
     move_cap = int(config["move_cap"]["instant_cap"])
     move_count = 0
     stdscr.clear()
@@ -70,6 +84,12 @@ def turing_instant(stdscr, color):
 
 
 def write_tape_content(stdscr, color, last_pos):
+    """Writes tape content in the curses terminal.
+
+    Args:
+        color (curses.color_pair): Colors to distinguish the latest changed value in the tape.
+        last_pos (int): Position of the last changed value in the tape.
+    """
     stdscr.addstr('[')
     for item_id, item in enumerate(tape.content()):
         if item_id == last_pos:
@@ -82,6 +102,11 @@ def write_tape_content(stdscr, color, last_pos):
 
 
 def turing_steps(stdscr, color):
+    """Goes through the turing machine step by step, writing evry one in the curses terminal. Writes to the output file.
+
+    Args:
+        color (curses.color_pair): Colors to distinguish the latest changed value in the tape.
+    """
     last_pos = None
     while True:
         stdscr.clear()
@@ -118,6 +143,8 @@ def turing_steps(stdscr, color):
 
 
 def terminal_writing(stdscr):
+    """Main function of the machine. Distinguishes between instand and step-by-step mode of the machine. Creates the curses terminal.
+    """
     stdscr.clear()
     stdscr.refresh()
     curses.echo()
