@@ -13,7 +13,7 @@ class Input:
     """
     def __init__(self, file):
         """Creates an instance of the Input class. Reads an input file and assigns values inside to its arguments.
-        
+
         Raises:
         InputFileEmptyError: Exception if input file is empty.
         InvalidInputFileError: Exception if input file has invalid data.

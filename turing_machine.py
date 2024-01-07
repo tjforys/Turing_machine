@@ -41,7 +41,7 @@ def turing_instant(stdscr, color, instructions, header, tape, machine_output, ar
 
     Args:
         color (curses.color_pair): Colors to distinguish the latest changed value in the tape.
-        instructions (classInstructions): Instructions class instance conatining instructions for the machine.
+        instructions (classInstructions): Instructions class instance containing instructions for the machine.
         header (classHead): The turing machine's header moving on the tape.
         tape (classTape): The turing machine's tape.
         machine_output (str): Target destination to the output file.
@@ -92,7 +92,7 @@ def turing_steps(stdscr, color, instructions, header, tape, machine_output, args
 
     Args:
         color (curses.color_pair): Colors to distinguish the latest changed value in the tape.
-        instructions (classInstructions): Instructions class instance conatining instructions for the machine.
+        instructions (classInstructions): Instructions class instance containing instructions for the machine.
         header (classHead): The turing machine's header moving on the tape.
         tape (classTape): The turing machine's tape.
         machine_output (str): Target destination to the output file.
@@ -122,14 +122,17 @@ def turing_steps(stdscr, color, instructions, header, tape, machine_output, args
             stdscr.getch()
             break
 
+        if check_if_continue(stdscr):
+            if not args.no_write:
+                write_output(
+                    f'{tape.content()} {(header.position(), header.state())}',
+                    machine_output)
+            break
+
         tape.change_value(header.position(), new_value)
         last_pos = header.position()
         header.change_state(new_state)
         header.move(direction)
-        if check_if_continue(stdscr):
-            if not args.no_write:
-                write_output(tape.content(), machine_output)
-            break
 
 
 def terminal_writing(stdscr):

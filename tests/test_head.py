@@ -1,4 +1,4 @@
-from classes.head import Head
+from classes.head import Head, Directions
 
 
 def test_create_object_success():
@@ -19,3 +19,8 @@ def test_change_position_general_success():
     assert header.position() == 0
     header.move("R")
     assert header.position() == 1
+
+
+def test_directions_class():
+    assert "R" == Directions.RIGHT
+    assert "L" == Directions.LEFT

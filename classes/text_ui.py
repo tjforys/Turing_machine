@@ -1,14 +1,14 @@
 class TextUi:
     """Class of functions with the purpose of displaying text in the curses terminal."""
     def program_stop_message(stdscr):
-        """Creates the display of the program stop message when checking whetehr to continue the program in step-by-step mode of the machine."""
+        """Creates the display of the program stop message when checking whether to continue the program in step-by-step mode of the machine."""
         stdscr.move(4, 0)
         stdscr.clrtoeol()
         stdscr.addstr(3, 0, "The program has been stopped")
         stdscr.getch()
 
     def wrong_input_message(stdscr):
-        """Creates the display for the wrong input message when checking whether to continue the mahcine in step-by-step mode."""
+        """Creates the display for the wrong input message when checking whether to continue the machine in step-by-step mode."""
         stdscr.move(3, 0)
         stdscr.clrtoeol()
         stdscr.addstr(4, 0, "Wrong input detected, try again.")
